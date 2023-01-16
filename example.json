@@ -1,0 +1,47 @@
+{
+    "specversion": "1.0",
+    "type": "com.twilio.iot.supersim.connection.data-session.updated",
+    "source": "/v1/SuperSim/ConnectionEvents/EZeb42ec296e094786c6dd34aab7b15fac",
+    "id": "EZeb42ec296e094786c6dd34aab7b15fac",
+    "dataschema": "https://events-schemas.twilio.com/SuperSim.ConnectionEvent/2",
+    "datacontenttype": "application/json",
+    "time": "2022-12-14T13:40:52.000Z",
+    "data": {
+        "network": {
+            "iso_country": "US",
+            "mnc": "260",
+            "mcc": "310",
+            "sid": "HWd46933be78a54c05b5c287ddeb9592f4",
+            "friendly_name": "T-Mobile"
+        },
+        "data_download": 0,
+        "data_session_update_end_time": "2022-12-14T13:40:52Z",
+        "location": {
+            "lon": -118.5720773,
+            "cell_id": "47322374",
+            "lat": 34.166991,
+            "lac": "15170"
+        },
+        "timestamp": "2022-12-14T13:40:52Z",
+        "data_session_update_start_time": "2022-12-14T13:34:52Z",
+        "sim_unique_name": "Zeblaze Thor 6 Android Watch",
+        "imei": "358600842867678",
+        "data_session_sid": "PIc64fc7780f12ab694aad316d7b06f7a3",
+        "data_session_data_total": 0,
+        "data_session_start_time": "2022-12-11T06:15:01Z",
+        "event_sid": "EZeb42ec296e094786c6dd34aab7b15fac",
+        "fleet_sid": "HF925ae5b4af6aeb7d5034d3f4b09c78ce",
+        "rat_type": "4G LTE",
+        "data_session_data_download": 0,
+        "data_total": 0,
+        "data_upload": 0,
+        "event_type": "com.twilio.iot.supersim.connection.data-session.updated",
+        "ip_address": "100.68.56.159",
+        "apn": "super",
+        "sim_sid": "HS2f71995b834d803ff5376799ba59bd1d",
+        "account_sid": "ACe7ea554f7fc0fad65e689bb5899bb6c3",
+        "sim_iccid": "89883070000005381783",
+        "imsi": "732123200563187",
+        "data_session_data_upload": 0
+    }
+}
