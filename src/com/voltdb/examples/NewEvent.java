@@ -79,6 +79,7 @@ public class NewEvent extends VoltProcedure {
 		long data_upload_limit = 2000;
 		long lac_threshold = 80;
 
+		// Fetch Device Profile
 		voltQueueSQL(GET_FIXED_DEVICE_PROFILE, sim_unique_name);
 		VoltTable deviceTable = voltExecuteSQL()[0];
 		if(deviceTable.advanceRow()) {
@@ -102,6 +103,7 @@ public class NewEvent extends VoltProcedure {
 			}
 		}
 
+		// Evaluate data Rules
 		if(data_download_limit < Integer.parseInt(data_download)) {
 			voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "Data download over limit " + data_download);
 			voltExecuteSQL();
@@ -111,6 +113,7 @@ public class NewEvent extends VoltProcedure {
 			voltExecuteSQL();
 		}
 
+		// Evaluate Session Duration Rule
 		voltQueueSQL(COMPARE_SESSION_FREQ, sim_unique_name);
 		VoltTable sessionFreqTable = voltExecuteSQL()[0];
 		if(sessionFreqTable.advanceRow()) {
@@ -122,6 +125,7 @@ public class NewEvent extends VoltProcedure {
 			}
 		}
 
+		// Evaluate IMEI Rules
 		voltQueueSQL(GET_IMEI, sim_unique_name);
 		VoltTable imeiTable = voltExecuteSQL()[0];
 		if(imeiTable.advanceRow()) {
@@ -132,16 +136,14 @@ public class NewEvent extends VoltProcedure {
 			}
 		}
 
+		// Evaluate Location Rules
 		if(mobile) {
 			GeographyPointValue gp = new GeographyPointValue(lon, lat);
-			System.out.println("Checking for " + gp);
 			voltQueueSQL(CHECK_STATE, gp);
-			System.out.println("Executing for " + gp);
 			VoltTable results[] = voltExecuteSQL();
 			VoltTable stateTable = results[0];
 			if(stateTable.advanceRow()) {
 				String state = stateTable.getString(0);
-				System.out.println("state = " + state);
 				if(!state.equals(homeLoc)) {
 					voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "Device Out of State in " + state + " when expected in " + homeLoc);
 					voltExecuteSQL();
@@ -163,6 +165,7 @@ public class NewEvent extends VoltProcedure {
 			}
 		}
 
+		// Infer Location ML
 		SQLStmt lacAnomalyProc = GET_FIXED_LAC_ANOMALY;
 		if(mobile)
 			lacAnomalyProc = GET_MOBILE_LAC_ANOMALY;
@@ -181,6 +184,7 @@ public class NewEvent extends VoltProcedure {
 
 		}
 
+		// Insert into event table
 		voltQueueSQL(INSERT, type, id, time, network, data_download, 
 				data_session_update_end_time, lon, lat, cellId, lac, tstamp,
 				data_session_update_start_time, 
@@ -191,6 +195,7 @@ public class NewEvent extends VoltProcedure {
 				data_upload, ip_address, apn, sim_sid, account_sid,
 				sim_iccid, imsi, data_session_data_upload);
 
+		// Insert into dump stream
 		voltQueueSQL(DUMP_EVENTS, type, id, time, network, data_download, 
 				data_session_update_end_time, lon, lat, cellId, lac, tstamp,
 				data_session_update_start_time, 
