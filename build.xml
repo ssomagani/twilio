@@ -42,6 +42,7 @@
   <target name="classes">
   	<jar destfile="classes.jar" basedir="bin">
   		<include name="com/voltdb/examples/NewEvent.class"/>
+  		<include name="com/voltdb/examples/DebugEvent.class"/>
   	</jar>
   </target>
 </project>

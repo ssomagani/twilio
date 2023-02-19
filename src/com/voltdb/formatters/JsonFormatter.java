@@ -23,7 +23,7 @@ public class JsonFormatter implements Formatter {
 	public Object[] transform(ByteBuffer payload) throws FormatException {
 
 		String buffer = new String(payload.array());
-		Object[] procArgs = new Object[27];
+		Object[] procArgs = new Object[30];
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -41,7 +41,7 @@ public class JsonFormatter implements Formatter {
 			Double lon = (Double) loc.get("lon");
 			Double lat = (Double) loc.get("lat");
 			String cellId = (String) loc.get("cell_id");
-			GeographyPointValue latLong = new GeographyPointValue(lon, lat);
+			String lac = (String) loc.get("lac");
 
 			procArgs[0] = map.get("type");
 			procArgs[1] = map.get("id");
@@ -49,27 +49,30 @@ public class JsonFormatter implements Formatter {
 			procArgs[3] = network.get("friendly_name");
 			procArgs[4] = data.get("data_download");
 			procArgs[5] = dataSessionUpdateEndTime;
-			procArgs[6] = latLong;
-			procArgs[7] = tstamp;
-			procArgs[8] = dataSessionUpdateStartTime;
-			procArgs[9] = data.get("sim_unique_name");
-			procArgs[10] = data.get("imei");
-			procArgs[11] = data.get("data_session_sid");
-			procArgs[12] = data.get("data_session_data_total");
-			procArgs[13] = dataSessionStartTime;
-			procArgs[14] = data.get("event_sid");
-			procArgs[15] = data.get("fleet_sid");
-			procArgs[16] = data.get("rat_type");
-			procArgs[17] = data.get("data_session_data_download");
-			procArgs[18] = data.get("data_total");
-			procArgs[19] = data.get("data_upload");
-			procArgs[20] = data.get("ip_address");
-			procArgs[21] = data.get("apn");
-			procArgs[22] = data.get("sim_sid");
-			procArgs[23] = data.get("account_sid");
-			procArgs[24] = data.get("sim_iccid");
-			procArgs[25] = data.get("imsi");
-			procArgs[26] = data.get("data_session_data_upload");
+			procArgs[6] = lon;
+			procArgs[7] = lat;
+			procArgs[8] = cellId;
+			procArgs[9] = lac;
+			procArgs[10] = tstamp;
+			procArgs[11] = dataSessionUpdateStartTime;
+			procArgs[12] = data.get("sim_unique_name");
+			procArgs[13] = data.get("imei");
+			procArgs[14] = data.get("data_session_sid");
+			procArgs[15] = data.get("data_session_data_total");
+			procArgs[16] = dataSessionStartTime;
+			procArgs[17] = data.get("event_sid");
+			procArgs[18] = data.get("fleet_sid");
+			procArgs[19] = data.get("rat_type");
+			procArgs[20] = data.get("data_session_data_download");
+			procArgs[21] = data.get("data_total");
+			procArgs[22] = data.get("data_upload");
+			procArgs[23] = data.get("ip_address");
+			procArgs[24] = data.get("apn");
+			procArgs[25] = data.get("sim_sid");
+			procArgs[26] = data.get("account_sid");
+			procArgs[27] = data.get("sim_iccid");
+			procArgs[28] = data.get("imsi");
+			procArgs[29] = data.get("data_session_data_upload");
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -89,8 +92,13 @@ public class JsonFormatter implements Formatter {
 		Date date;
 		try {
 			date = sdf1.parse(text);
-		} catch (ParseException e) {
-			date = sdf2.parse(text);
+		} catch (Exception e) {
+			try {
+				date = sdf2.parse(text);
+			} catch (Exception e1) {
+				System.out.println(text);
+				return "";
+			}
 		} 
 		return outputSDF.format(date);
 	}
