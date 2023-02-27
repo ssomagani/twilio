@@ -22,10 +22,13 @@ public class NewEvent extends VoltProcedure {
 	private final SQLStmt GET_MOBILE_DEVICE_PROFILE = new SQLStmt("select * from mobile_devices where sim_unique_name = ?");
 	private final SQLStmt GET_FIXED_DEVICE_PROFILE = new SQLStmt("select * from fixed_devices where sim_unique_name = ?");
 	private final SQLStmt INSERT_NOTIF = new SQLStmt("insert into notifications values (?, ?, ?)");
-	private final SQLStmt GET_IMEI = new SQLStmt("select imei from event where sim_unique_name = ?");
-	//	private final SQLStmt CHECK_STATE = new SQLStmt("select state from states where CONTAINS( boundary ,POINTFROMTEXT(CONCAT('POINT(',CAST(? AS VARCHAR),' ',CAST(? AS VARCHAR),')') ))");
+	private final SQLStmt GET_IMEI = new SQLStmt("select imei from event where sim_unique_name = ? order by time limit 1");
+	//	private final SQLStmt CHECK_STATE = new SQLStmt("select state from states where 
+//	CONTAINS( boundary ,POINTFROMTEXT(CONCAT('POINT(',CAST(? AS VARCHAR),' ',CAST(? AS VARCHAR),')') ))");
 	private final SQLStmt CHECK_STATE = new SQLStmt("select state from states where CONTAINS( boundary, ?)");
-	private final SQLStmt CHECK_DIST_FROM_HOME = new SQLStmt("select distance (POINTFROMTEXT(CONCAT('POINT(',CAST(? AS VARCHAR),' ',CAST(? AS VARCHAR),')') ), b.coords) from fixed_devices a, known_locations b where a.sim_unique_name=? and a.home_loc = b.name; ");
+	private final SQLStmt CHECK_DIST_FROM_HOME = new SQLStmt("select distance "
+			+ "(POINTFROMTEXT(CONCAT('POINT(',CAST(? AS VARCHAR),' ',CAST(? AS VARCHAR),')') ), b.coords) "
+			+ "from fixed_devices a, known_locations b where a.sim_unique_name=? and a.home_loc = b.name; ");
 	private final SQLStmt GET_FIXED_LAC_ANOMALY = new SQLStmt("select dat_5_model (?, ?) from fixed_devices where sim_unique_name = ?");
 	private final SQLStmt GET_MOBILE_LAC_ANOMALY = new SQLStmt("select dat_5_model (?, ?) from mobile_devices where sim_unique_name = ?");
 	private final SQLStmt COMPARE_SESSION_FREQ = new SQLStmt("select max(session_duration) from session_freq where sim_unique_name = ?");
@@ -78,6 +81,7 @@ public class NewEvent extends VoltProcedure {
 		long data_download_limit = 5000;
 		long data_upload_limit = 2000;
 		long lac_threshold = 80;
+		String reg_imei = "";
 
 		// Fetch Device Profile
 		voltQueueSQL(GET_FIXED_DEVICE_PROFILE, sim_unique_name);
@@ -88,6 +92,7 @@ public class NewEvent extends VoltProcedure {
 			data_download_limit = deviceTable.getLong(3);
 			data_upload_limit = deviceTable.getLong(4);
 			lac_threshold = deviceTable.getLong(5);
+			reg_imei = deviceTable.getString(6);
 		} else {
 			voltQueueSQL(GET_MOBILE_DEVICE_PROFILE, sim_unique_name);
 			deviceTable = voltExecuteSQL()[0];
@@ -97,6 +102,7 @@ public class NewEvent extends VoltProcedure {
 				data_download_limit = deviceTable.getLong(2);
 				data_upload_limit = deviceTable.getLong(3);
 				lac_threshold = deviceTable.getLong(4);
+				reg_imei = deviceTable.getString(5);
 			} else {
 				voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "Unknown device detected");
 				voltExecuteSQL();
@@ -126,12 +132,16 @@ public class NewEvent extends VoltProcedure {
 		}
 
 		// Evaluate IMEI Rules
+		if(!imei.equals(reg_imei)) {
+			voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "IMEI change detected. Registered IMEI: " + reg_imei + " This IMEI: " + imei);
+			voltExecuteSQL();
+		}
 		voltQueueSQL(GET_IMEI, sim_unique_name);
 		VoltTable imeiTable = voltExecuteSQL()[0];
 		if(imeiTable.advanceRow()) {
 			String prevImei = imeiTable.getString(0);
 			if(!prevImei.equals(imei)) {
-				voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "IMEI change detected");
+				voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "IMEI change detected. Prev IMEI: " + prevImei + " This IMEI: " + imei);
 				voltExecuteSQL();
 			}
 		}

@@ -78,7 +78,8 @@ create table fixed_devices (
 	radius integer not null,
 	data_download_limit integer not null,
 	data_upload_limit integer not null,
-	lac_threshold integer not null
+	lac_threshold integer not null,
+	registered_imei varchar
 );
 
 create table mobile_devices (
@@ -86,7 +87,8 @@ create table mobile_devices (
 	home_loc varchar(32) not null,
 	data_download_limit integer not null,
 	data_upload_limit integer not null,
-	lac_threshold integer not null
+	lac_threshold integer not null,
+	registered_imei varchar
 );
 
 -- Streams --------------------------

@@ -5,7 +5,7 @@ insert into known_locations values ('Los Angeles', POINTFROMTEXT ('POINT (-118.4
 insert into known_locations values ('Lexington', POINTFROMTEXT ('POINT (84.5459 38.0610)'));
 insert into known_locations values ('Paducah', POINTFROMTEXT ('POINT (-88.6234 37.0903)'));
 
-insert into mobile_devices values ('GV500MAP - Ranger', 'Kentucky', 7500000, 7500000, 90);
-insert into fixed_devices values ('GL-X1200 SIM 1a (EP06)', 'Paducah', 20000, 7500000, 7500000, 80);
-insert into fixed_devices values ('Samsung Tab S5e', 'Paducah', 20000, 7500000, 7500000, 80);
-insert into fixed_devices values ('Zeblaze Thor 6 Android Watch', 'Los Angeles', 20000, 7500000, 7500000, 80);
+insert into mobile_devices values ('GV500MAP - Ranger', 'Kentucky', 7500000, 7500000, 90, '862061048023666');
+insert into fixed_devices values ('GL-X1200 SIM 1a (EP06)', 'Paducah', 20000, 7500000, 7500000, 80, '99');
+insert into fixed_devices values ('Samsung Tab S5e', 'Paducah', 20000, 7500000, 7500000, 80, '358590101001806');
+insert into fixed_devices values ('Zeblaze Thor 6 Android Watch', 'Los Angeles', 20000, 7500000, 7500000, 80, '358600842867678');
