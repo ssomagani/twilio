@@ -23,7 +23,7 @@ public class JsonFormatter implements Formatter {
 	public Object[] transform(ByteBuffer payload) throws FormatException {
 
 		String buffer = new String(payload.array());
-		Object[] procArgs = new Object[30];
+		Object[] procArgs = new Object[31];
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -36,6 +36,7 @@ public class JsonFormatter implements Formatter {
 			TimestampType dataSessionUpdateStartTime = getTimestamp((String) data.get("data_session_update_start_time"));
 			TimestampType dataSessionUpdateEndTime = getTimestamp((String) data.get("data_session_update_end_time"));
 			TimestampType dataSessionStartTime = getTimestamp((String) data.get("data_session_start_time"));
+			TimestampType dataSessionEndTime = getTimestamp((String) data.get("data_session_end_time"));
 
 			HashMap<String, Object> loc = (HashMap<String, Object>) data.get("location");
 			Double lon = (Double) loc.get("lon");
@@ -73,6 +74,7 @@ public class JsonFormatter implements Formatter {
 			procArgs[27] = data.get("sim_iccid");
 			procArgs[28] = data.get("imsi");
 			procArgs[29] = data.get("data_session_data_upload");
+			procArgs[30] = dataSessionEndTime;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}

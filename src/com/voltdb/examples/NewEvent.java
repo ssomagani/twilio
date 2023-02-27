@@ -19,6 +19,7 @@ public class NewEvent extends VoltProcedure {
 			+ "?, ?, ?, ?, ?"
 			+ " )");
 
+	private final String END_SESSION_TYPE = "com.twilio.iot.supersim.connection.data-session.ended";
 	private final SQLStmt GET_MOBILE_DEVICE_PROFILE = new SQLStmt("select * from mobile_devices where sim_unique_name = ?");
 	private final SQLStmt GET_FIXED_DEVICE_PROFILE = new SQLStmt("select * from fixed_devices where sim_unique_name = ?");
 	private final SQLStmt INSERT_NOTIF = new SQLStmt("insert into notifications values (?, ?, ?)");
@@ -39,8 +40,8 @@ public class NewEvent extends VoltProcedure {
 			+ "?, ?, ?, ?, ?,"
 			+ "?, ?, ?, ?, ?,"
 			+ "?, ?, ?, ?, ?,"
-			+ "?, ?, ?, ?, ?"
-			+ " )");
+			+ "?, ?, ?, ?, ?,"
+			+ "? )");
 
 	public VoltTable[] run(
 			String type, 
@@ -72,7 +73,8 @@ public class NewEvent extends VoltProcedure {
 			String account_sid, 
 			String sim_iccid, 
 			String imsi,
-			String data_session_data_upload) 
+			String data_session_data_upload,
+			TimestampType data_session_end_time) 
 					throws ParseException {
 
 		String homeLoc = null;
@@ -120,14 +122,16 @@ public class NewEvent extends VoltProcedure {
 		}
 
 		// Evaluate Session Duration Rule
-		voltQueueSQL(COMPARE_SESSION_FREQ, sim_unique_name);
-		VoltTable sessionFreqTable = voltExecuteSQL()[0];
-		if(sessionFreqTable.advanceRow()) {
-			long sessionDurationMax = sessionFreqTable.getLong(0);
-			long sessionDuration = (data_session_update_end_time.getTime() - data_session_update_start_time.getTime())/1000000;
-			if(sessionDuration > sessionDurationMax) {
-				voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "Anomalous session duration detected " + sessionDuration);
-				voltExecuteSQL();
+		if(type.equals(END_SESSION_TYPE)) {
+			voltQueueSQL(COMPARE_SESSION_FREQ, sim_unique_name);
+			VoltTable sessionFreqTable = voltExecuteSQL()[0];
+			if(sessionFreqTable.advanceRow()) {
+				long sessionDurationMax = sessionFreqTable.getLong(0);
+				long sessionDuration = (data_session_end_time.getTime() - data_session_start_time.getTime())/1000000;
+				if(sessionDuration > sessionDurationMax) {
+					voltQueueSQL(INSERT_NOTIF, sim_unique_name, time, "Anomalous session duration detected " + sessionDuration);
+					voltExecuteSQL();
+				}
 			}
 		}
 
