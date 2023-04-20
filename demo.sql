@@ -18,4 +18,3 @@ exec NewEvent com.twilio.iot.supersim.connection.data-session.updated, EZc44ca64
 
 select dat_5_model (8197, '100.64.123.28') from states;
 
-	

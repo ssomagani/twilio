@@ -82,6 +82,8 @@ public class JsonFormatter implements Formatter {
 		return procArgs;
 	}
 	private static TimestampType getTimestamp(String value) throws ParseException {
+		if(value == null || value.equals("null"))
+			return null;
 		String dateString = cleanUpDate(value);
 		TimestampType tst = new TimestampType(dateString);
 		return tst;
@@ -92,6 +94,7 @@ public class JsonFormatter implements Formatter {
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		SimpleDateFormat outputSDF = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 		Date date;
+		
 		try {
 			date = sdf1.parse(text);
 		} catch (Exception e) {

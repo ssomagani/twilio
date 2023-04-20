@@ -197,7 +197,7 @@ create procedure session_rank as
 	data 
 	from data_by_sim order by rnk, sim_unique_name;
 	
-create procedure session_duration_rank PARTITION ON TABLE A COLUMN SIM_UNIQUE_NAME as 
+create procedure session_duration_rank PARTITION ON TABLE event COLUMN SIM_UNIQUE_NAME as 
 	select rnk from 
 	(select 
 		rank() over (partition by sim_unique_name order by freq desc) as rnk, 

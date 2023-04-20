@@ -23,7 +23,7 @@ public class NewEvent extends VoltProcedure {
 	private final SQLStmt GET_MOBILE_DEVICE_PROFILE = new SQLStmt("select * from mobile_devices where sim_unique_name = ?");
 	private final SQLStmt GET_FIXED_DEVICE_PROFILE = new SQLStmt("select * from fixed_devices where sim_unique_name = ?");
 	private final SQLStmt INSERT_NOTIF = new SQLStmt("insert into notifications values (?, ?, ?)");
-	private final SQLStmt GET_IMEI = new SQLStmt("select imei from event where sim_unique_name = ? order by time limit 1");
+	private final SQLStmt GET_IMEI = new SQLStmt("select imei from event where sim_unique_name = ? order by time desc limit 1");
 	//	private final SQLStmt CHECK_STATE = new SQLStmt("select state from states where 
 //	CONTAINS( boundary ,POINTFROMTEXT(CONCAT('POINT(',CAST(? AS VARCHAR),' ',CAST(? AS VARCHAR),')') ))");
 	private final SQLStmt CHECK_STATE = new SQLStmt("select state from states where CONTAINS( boundary, ?)");
@@ -40,8 +40,8 @@ public class NewEvent extends VoltProcedure {
 			+ "?, ?, ?, ?, ?,"
 			+ "?, ?, ?, ?, ?,"
 			+ "?, ?, ?, ?, ?,"
-			+ "?, ?, ?, ?, ?,"
-			+ "? )");
+			+ "?, ?, ?, ?, ?"
+			+ " )");
 
 	public VoltTable[] run(
 			String type, 
