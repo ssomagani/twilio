@@ -7,7 +7,7 @@
       </fileset>
   </path>
 
-  <target name="build" depends="clean, dist, formatter, classes"/>
+  <target name="build" depends="clean, compile, dist, formatter, classes"/>
 
   <target name="clean">
     <delete dir="obj"/>
@@ -15,6 +15,11 @@
   	<delete file="classes.jar"/>
   </target>
 
+	<target name="compile">
+	        <mkdir dir="bin"/>
+	        <javac srcdir="src" destdir="bin" classpathref="project.classpath"/>
+	</target>
+	
   <target name="dist">
     <mkdir dir="obj"/>
     <javac srcdir="src" destdir="obj">
